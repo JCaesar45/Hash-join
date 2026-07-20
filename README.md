@@ -2,8 +2,6 @@
 
 **"The algorithm that doesn't just work — it seduces."**
 
-![Hero Visual](assets/hero.png)
-
 In a world drowning in mediocre code, **VELOCITY HASHJOIN** stands apart as a monument to computational elegance.
 
 ### The Vision
