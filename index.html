@@ -1,0 +1,110 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VELOCITY • HASHJOIN</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="nav">
+    <div class="logo">VELOCITY<span class="gold">.</span></div>
+    <div class="nav-links">
+      <a href="#demo">LIVE DEMO</a>
+      <a href="#implementations">IMPLEMENTATIONS</a>
+      <a href="#theory">THEORY</a>
+      <a href="#contact">ENGAGE</a>
+    </div>
+  </div>
+
+  <header class="hero">
+    <div class="hero-content">
+      <div class="badge">O(N) SCALABLE JOIN ENGINE</div>
+      <h1>HASH<span class="gold">JOIN</span></h1>
+      <p class="tagline">Where elegance meets raw computational power.<br>Built for those who demand excellence.</p>
+      <div class="cta-buttons">
+        <button onclick="document.getElementById('demo-section').scrollIntoView({behavior: 'smooth'})" class="cta-primary">EXPERIENCE THE JOIN</button>
+        <button onclick="window.open('https://github.com', '_blank')" class="cta-secondary">FORK ON GITHUB</button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <canvas id="hero-canvas" width="800" height="600"></canvas>
+    </div>
+  </header>
+
+  <section id="demo-section" class="demo">
+    <div class="section-header">
+      <h2>INTERACTIVE HASH JOIN</h2>
+      <p>Real-time visualization. Modify data. Witness O(1) lookups in action.</p>
+    </div>
+
+    <div class="demo-grid">
+      <div class="table-panel">
+        <h3>TABLE A — EMPLOYEES</h3>
+        <textarea id="tableA" class="data-input">{"age":27,"name":"Jonah"}
+{"age":18,"name":"Alan"}
+{"age":28,"name":"Glory"}
+{"age":18,"name":"Popeye"}
+{"age":28,"name":"Alan"}</textarea>
+      </div>
+
+      <div class="table-panel">
+        <h3>TABLE B — NEMESIS</h3>
+        <textarea id="tableB" class="data-input">{"character":"Jonah","nemesis":"Whales"}
+{"character":"Jonah","nemesis":"Spiders"}
+{"character":"Alan","nemesis":"Ghosts"}
+{"character":"Alan","nemesis":"Zombies"}
+{"character":"Glory","nemesis":"Buffy"}</textarea>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button onclick="runHashJoin()" class="execute-btn">EXECUTE HASH JOIN →</button>
+      <button onclick="resetDemo()" class="reset-btn">RESET</button>
+    </div>
+
+    <div id="result" class="result-panel"></div>
+    <div id="viz" class="visualization"></div>
+  </section>
+
+  <section id="implementations" class="implementations">
+    <div class="section-header">
+      <h2>POLYGLOT PERFECTION</h2>
+      <p>Production-grade implementations across the modern stack</p>
+    </div>
+
+    <div class="lang-tabs">
+      <button class="tab active" data-lang="js">JAVASCRIPT</button>
+      <button class="tab" data-lang="ts">TYPESCRIPT</button>
+      <button class="tab" data-lang="py">PYTHON</button>
+      <button class="tab" data-lang="java">JAVA</button>
+    </div>
+
+    <pre id="code-display"><code id="code-content"></code></pre>
+  </section>
+
+  <section id="theory" class="theory">
+    <div class="content">
+      <h2>THE ARCHITECTURE OF EFFICIENCY</h2>
+      <p>The hash join algorithm represents one of the most elegant solutions in relational algebra. By building an in-memory hash table (multimap) on the smaller relation during the build phase, we achieve constant-time probe lookups in the subsequent scan phase. This yields near-linear performance even on massive datasets.</p>
+      <div class="metrics">
+        <div>Build: O(|B|)</div>
+        <div>Probe: O(|A| + |matches|)</div>
+        <div>Space: O(|B|)</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-content">
+      <p>© 2026 VELOCITY LABS • CRAFTED FOR THE OBSESSIVE</p>
+      <div class="social">TW • LI • GH</div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
