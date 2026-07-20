@@ -32,7 +32,7 @@ We took the classic hash join — the same technique powering the world's larges
 git clone https://github.com/yourname/velocity-hashjoin.git
 
 # Run the Java demo
-javac HashJoin.java && java HashJoin
+javac hashjoin.java && java hashjoin
 
 # Open the masterpiece
 open index.html
