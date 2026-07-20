@@ -9,49 +9,34 @@
 </head>
 
 <body>
-  <div class="nav">
+  <nav>
     <div class="logo">VELOCITY<span class="gold">.</span></div>
-    <div class="nav-links">
-      <a href="#demo">LIVE DEMO</a>
-      <a href="#implementations">IMPLEMENTATIONS</a>
-      <a href="#theory">THEORY</a>
-      <a href="#contact">ENGAGE</a>
-    </div>
-  </div>
+  </nav>
 
   <header class="hero">
     <div class="hero-content">
-      <div class="badge">O(N) SCALABLE JOIN ENGINE</div>
       <h1>HASH<span class="gold">JOIN</span></h1>
-      <p class="tagline">Where elegance meets raw computational power.<br>Built for those who demand excellence.</p>
-      <div class="cta-buttons">
-        <button onclick="document.getElementById('demo-section').scrollIntoView({behavior: 'smooth'})" class="cta-primary">EXPERIENCE THE JOIN</button>
-        <button onclick="window.open('https://github.com', '_blank')" class="cta-secondary">FORK ON GITHUB</button>
-      </div>
-    </div>
-    <div class="hero-visual">
-      <canvas id="hero-canvas" width="800" height="600"></canvas>
+      <p>Elegant • Performant • Luxurious</p>
+      <button onclick="document.getElementById('demo').scrollIntoView({ behavior: 'smooth' })" class="cta">
+        EXPERIENCE THE DEMO
+      </button>
     </div>
   </header>
 
-  <section id="demo-section" class="demo">
-    <div class="section-header">
-      <h2>INTERACTIVE HASH JOIN</h2>
-      <p>Real-time visualization. Modify data. Witness O(1) lookups in action.</p>
-    </div>
+  <section id="demo" class="demo-section">
+    <h2>LIVE INTERACTIVE HASH JOIN</h2>
 
     <div class="demo-grid">
-      <div class="table-panel">
-        <h3>TABLE A — EMPLOYEES</h3>
+      <div>
+        <h3>TABLE A — Employees</h3>
         <textarea id="tableA" class="data-input">{"age":27,"name":"Jonah"}
 {"age":18,"name":"Alan"}
 {"age":28,"name":"Glory"}
 {"age":18,"name":"Popeye"}
 {"age":28,"name":"Alan"}</textarea>
       </div>
-
-      <div class="table-panel">
-        <h3>TABLE B — NEMESIS</h3>
+      <div>
+        <h3>TABLE B — Nemesis</h3>
         <textarea id="tableB" class="data-input">{"character":"Jonah","nemesis":"Whales"}
 {"character":"Jonah","nemesis":"Spiders"}
 {"character":"Alan","nemesis":"Ghosts"}
@@ -61,50 +46,81 @@
     </div>
 
     <div class="controls">
-      <button onclick="runHashJoin()" class="execute-btn">EXECUTE HASH JOIN →</button>
+      <button onclick="runDemo()" class="execute-btn">EXECUTE HASH JOIN →</button>
       <button onclick="resetDemo()" class="reset-btn">RESET</button>
     </div>
 
     <div id="result" class="result-panel"></div>
-    <div id="viz" class="visualization"></div>
   </section>
 
-  <section id="implementations" class="implementations">
-    <div class="section-header">
-      <h2>POLYGLOT PERFECTION</h2>
-      <p>Production-grade implementations across the modern stack</p>
-    </div>
+  <script>
+    function hashJoin(A, B) {
+      const MB = new Map();
+      for (let b of B) {
+        const key = b.character;
+        if (!MB.has(key)) MB.set(key, []);
+        MB.get(key).push(b);
+      }
+      const C = [];
+      for (let a of A) {
+        const key = a.name;
+        if (MB.has(key)) {
+          for (let b of MB.get(key)) {
+            C.push({
+              A_age: a.age,
+              A_name: a.name,
+              B_character: b.character,
+              B_nemesis: b.nemesis
+            });
+          }
+        }
+      }
+      return C;
+    }
 
-    <div class="lang-tabs">
-      <button class="tab active" data-lang="js">JAVASCRIPT</button>
-      <button class="tab" data-lang="ts">TYPESCRIPT</button>
-      <button class="tab" data-lang="py">PYTHON</button>
-      <button class="tab" data-lang="java">JAVA</button>
-    </div>
+    function runDemo() {
+      const rawA = document.getElementById('tableA').value.trim().split('\n');
+      const rawB = document.getElementById('tableB').value.trim().split('\n');
+      const A = rawA.map(line => {
+        try {
+          return JSON.parse(line.trim());
+        } catch (e) {
+          return null;
+        }
+      }).filter(Boolean);
+      const B = rawB.map(line => {
+        try {
+          return JSON.parse(line.trim());
+        } catch (e) {
+          return null;
+        }
+      }).filter(Boolean);
+      const result = hashJoin(A, B);
+      let html = `
+                <h3 style="color:#d4af37">✅ HASH JOIN COMPLETE — ${result.length} MATCHES</h3>
+                <table>
+                    <thead>
+                        <tr><th>A_age</th><th>A_name</th><th>B_character</th><th>B_nemesis</th></tr>
+                    </thead>
+                    <tbody>`;
+      result.forEach(row => {
+        html += `<tr>
+                    <td>${row.A_age}</td>
+                    <td>${row.A_name}</td>
+                    <td>${row.B_character}</td>
+                    <td>${row.B_nemesis}</td>
+                </tr>`;
+      });
+      html += `</tbody></table>`;
+      document.getElementById('result').innerHTML = html;
+    }
 
-    <pre id="code-display"><code id="code-content"></code></pre>
-  </section>
-
-  <section id="theory" class="theory">
-    <div class="content">
-      <h2>THE ARCHITECTURE OF EFFICIENCY</h2>
-      <p>The hash join algorithm represents one of the most elegant solutions in relational algebra. By building an in-memory hash table (multimap) on the smaller relation during the build phase, we achieve constant-time probe lookups in the subsequent scan phase. This yields near-linear performance even on massive datasets.</p>
-      <div class="metrics">
-        <div>Build: O(|B|)</div>
-        <div>Probe: O(|A| + |matches|)</div>
-        <div>Space: O(|B|)</div>
-      </div>
-    </div>
-  </section>
-
-  <footer>
-    <div class="footer-content">
-      <p>© 2026 VELOCITY LABS • CRAFTED FOR THE OBSESSIVE</p>
-      <div class="social">TW • LI • GH</div>
-    </div>
-  </footer>
-
-  <script src="script.js"></script>
+    function resetDemo() {
+      document.getElementById('result').innerHTML = '<p style="color:#888;text-align:center;padding:40px;">Run the join to see results...</p>';
+    }
+    // Auto demo on load
+    window.onload = () => setTimeout(runDemo, 600);
+  </script>
 </body>
 
 </html>
