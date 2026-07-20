@@ -1,123 +1,159 @@
-// script.js
-let currentLang = "js";
+// script.js - VELOCITY HASHJOIN
+// High-end, clean, and production-ready
 
-const implementations = {
-  js: `function hashJoin(A, B) {
-  const MB = new Map();
-  for (const b of B) {
-    const key = b.character;
-    if (!MB.has(key)) MB.set(key, []);
-    MB.get(key).push(b);
+/**
+ * Core Hash Join Algorithm
+ * @param {Array<Object>} A - First table (probe)
+ * @param {Array<Object>} B - Second table (build)
+ * @returns {Array<Object>} Joined result
+ */
+function hashJoin(A, B) {
+  // Build Phase: Create multimap from Table B
+  const multiMap = new Map();
+
+  for (const row of B) {
+    const key = row.character;
+    if (!multiMap.has(key)) {
+      multiMap.set(key, []);
+    }
+    multiMap.get(key).push(row);
   }
-  
-  const C = [];
-  for (const a of A) {
-    const key = a.name;
-    if (MB.has(key)) {
-      for (const b of MB.get(key)) {
-        C.push({
-          A_age: a.age,
-          A_name: a.name,
-          B_character: b.character,
-          B_nemesis: b.nemesis
+
+  // Probe Phase: Scan Table A and join matches
+  const result = [];
+
+  for (const row of A) {
+    const key = row.name;
+
+    if (multiMap.has(key)) {
+      for (const match of multiMap.get(key)) {
+        result.push({
+          A_age: row.age,
+          A_name: row.name,
+          B_character: match.character,
+          B_nemesis: match.nemesis
         });
       }
     }
   }
-  return C;
-}`,
-  ts: `interface RowA { age: number; name: string; }
-interface RowB { character: string; nemesis: string; }
 
-function hashJoin(A: RowA[], B: RowB[]): any[] {
-  const MB = new Map<string, RowB[]>();
-  // ... (full typed implementation)
-}`,
-  py: `def hash_join(A, B):
-    from collections import defaultdict
-    mb = defaultdict(list)
-    for b in B:
-        mb[b['character']].append(b)
-    # ...`,
-  java: `public class HashJoin {
-  public static List<Map<String, Object>> join(List<Map<String, Object>> A, List<Map<String, Object>> B) {
-    // Production Java implementation with generics
+  return result;
+}
+
+/**
+ * Parse textarea input into array of objects
+ * @param {string} text
+ * @returns {Array<Object>}
+ */
+function parseTableInput(text) {
+  return text
+    .trim()
+    .split("\n")
+    .map((line) => {
+      try {
+        return JSON.parse(line.trim());
+      } catch (e) {
+        return null;
+      }
+    })
+    .filter((item) => item !== null);
+}
+
+/**
+ * Main demo execution function
+ */
+function runDemo() {
+  const rawA = document.getElementById("tableA").value;
+  const rawB = document.getElementById("tableB").value;
+
+  const tableA = parseTableInput(rawA);
+  const tableB = parseTableInput(rawB);
+
+  if (tableA.length === 0 || tableB.length === 0) {
+    showMessage("Please provide valid data in both tables.", "error");
+    return;
   }
-}`
+
+  const startTime = performance.now();
+  const result = hashJoin(tableA, tableB);
+  const endTime = performance.now();
+
+  renderResult(result, endTime - startTime);
+}
+
+/**
+ * Render results in a beautiful table
+ */
+function renderResult(result, executionTime) {
+  const container = document.getElementById("result");
+
+  let html = `
+        <div class="result-header">
+            <h3>✅ HASH JOIN COMPLETED</h3>
+            <p><strong>${
+              result.length
+            }</strong> matches • ${executionTime.toFixed(2)}ms</p>
+        </div>
+        <table class="result-table">
+            <thead>
+                <tr>
+                    <th>A_age</th>
+                    <th>A_name</th>
+                    <th>B_character</th>
+                    <th>B_nemesis</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+  result.forEach((row) => {
+    html += `
+            <tr>
+                <td>${row.A_age}</td>
+                <td>${row.A_name}</td>
+                <td>${row.B_character}</td>
+                <td>${row.B_nemesis}</td>
+            </tr>
+        `;
+  });
+
+  html += `</tbody></table>`;
+
+  container.innerHTML = html;
+}
+
+/**
+ * Show temporary message
+ */
+function showMessage(text, type = "info") {
+  const container = document.getElementById("result");
+  container.innerHTML = `
+        <div style="padding: 30px; text-align: center; color: ${
+          type === "error" ? "#ff6b6b" : "#d4af37"
+        };">
+            ${text}
+        </div>
+    `;
+}
+
+/**
+ * Reset the demo
+ */
+function resetDemo() {
+  document.getElementById("result").innerHTML = `
+        <div style="padding: 60px; text-align: center; color: #666;">
+            Click <strong>EXECUTE HASH JOIN</strong> to see the magic.
+        </div>
+    `;
+}
+
+// Auto-run demo when page loads
+window.onload = () => {
+  setTimeout(() => {
+    runDemo();
+  }, 700);
 };
 
-function runHashJoin() {
-  const A = document
-    .getElementById("tableA")
-    .value.trim()
-    .split("\n")
-    .map((line) => {
-      try {
-        return JSON.parse(line);
-      } catch (e) {
-        return {};
-      }
-    })
-    .filter((o) => o.name);
-
-  const B = document
-    .getElementById("tableB")
-    .value.trim()
-    .split("\n")
-    .map((line) => {
-      try {
-        return JSON.parse(line);
-      } catch (e) {
-        return {};
-      }
-    })
-    .filter((o) => o.character);
-
-  // Execute JS version
-  const result = hashJoin(A, B);
-
-  let html =
-    "<h3>RESULT SET</h3><table><tr><th>A_age</th><th>A_name</th><th>B_character</th><th>B_nemesis</th></tr>";
-  result.forEach((row) => {
-    html += `<tr><td>${row.A_age}</td><td>${row.A_name}</td><td>${row.B_character}</td><td>${row.B_nemesis}</td></tr>`;
-  });
-  html += "</table>";
-
-  document.getElementById("result").innerHTML = html;
-
-  // Simple visualization
-  const viz = document.getElementById("viz");
-  viz.innerHTML = `<div class="success">✓ HASH JOIN COMPLETE — ${result.length} MATCHES GENERATED</div>`;
-}
-
-function resetDemo() {
-  document.getElementById("result").innerHTML = "";
-  document.getElementById("viz").innerHTML = "";
-}
-
-// Tab functionality
-document.querySelectorAll(".tab").forEach((tab) => {
-  tab.addEventListener("click", () => {
-    document
-      .querySelectorAll(".tab")
-      .forEach((t) => t.classList.remove("active"));
-    tab.classList.add("active");
-    currentLang = tab.dataset.lang;
-    document.getElementById("code-content").textContent =
-      implementations[currentLang];
-  });
-});
-
-// Canvas animation for hero
-const canvas = document.getElementById("hero-canvas");
-const ctx = canvas.getContext("2d");
-
-function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  // Draw animated hash nodes and connections
-  ctx.strokeStyle = "#d4af37";
-  ctx.lineWidth = 1.5;
-  // ... (particle/hash visualization code)
-  requestAnimationFrame(animate);
-}
-animate();
+// Make functions available globally for inline onclick handlers
+window.runDemo = runDemo;
+window.resetDemo = resetDemo;
